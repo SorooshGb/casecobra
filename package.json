@@ -11,6 +11,7 @@
   "dependencies": {
     "@dprint/json": "^0.20.0",
     "@dprint/typescript": "^0.95.0",
+    "@kinde-oss/kinde-auth-nextjs": "^2.6.1",
     "@radix-ui/react-slot": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
