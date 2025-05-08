@@ -38,7 +38,7 @@ async function Navbar() {
                     )
                     : null}
                   <Link
-                    href="/"
+                    href="/configure/upload"
                     className={buttonVariants({
                       size: 'sm',
                       className: 'hidden sm:flex items-center gap-1',
@@ -70,7 +70,7 @@ async function Navbar() {
                   <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
 
                   <Link
-                    href="/"
+                    href="/configure/upload"
                     className={buttonVariants({
                       size: 'sm',
                       className: 'hidden sm:flex items-center gap-1',
