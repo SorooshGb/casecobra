@@ -9,7 +9,7 @@ import { useState, useTransition } from 'react';
 import Dropzone, { FileRejection } from 'react-dropzone';
 import { toast } from 'sonner';
 
-function Page() {
+function UploadStepPage() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -110,4 +110,4 @@ function Page() {
     </div>
   );
 }
-export default Page;
+export default UploadStepPage;
