@@ -5,17 +5,9 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { Toaster } from '@/components/ui/sonner';
 import Providers from '@/context/Providers';
+import { Recursive } from 'next/font/google';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
+const recursive = Recursive({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'casecobra',
@@ -28,10 +20,10 @@ export default function RootLayout({ children }: Readonly<{
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${recursive.className} antialiased`}
       >
         <Navbar />
-        <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)]">
+        <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)] grainy-light">
           <div className="flex-1 flex flex-col h-full">
             <Providers>{children}</Providers>
           </div>
