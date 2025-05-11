@@ -22,7 +22,7 @@ async function Navbar() {
               ? (
                 <>
                   <Link
-                    href="api/auth/logout"
+                    href="/api/auth/logout"
                     className={buttonVariants({ size: 'sm', variant: 'ghost' })}
                   >
                     Sign out
