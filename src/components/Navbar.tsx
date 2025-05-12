@@ -30,7 +30,7 @@ async function Navbar() {
                   {isAdmin
                     ? (
                       <Link
-                        href="/"
+                        href="/dashboard"
                         className={buttonVariants({ size: 'sm', variant: 'ghost' })}
                       >
                         Dashboard ✨
