@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import Wrapper from '@/components/Wrapper';
 import { db } from '@/db/prisma';
 import { formatPrice } from '@/lib/utils';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
@@ -69,8 +70,8 @@ async function DashboardPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-muted/40">
-      <div className="max-w-7xl w-full mx-auto flex flex-col sm:gap-4 sm:py-4">
+    <Wrapper>
+      <div className="flex flex-col sm:gap-4 py-4">
         <div className="flex flex-col gap-16">
           <div className="grid gap-4 sm:grid-cols-2">
             <Card>
@@ -140,7 +141,7 @@ async function DashboardPage() {
           </Table>
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 }
 export default DashboardPage;
