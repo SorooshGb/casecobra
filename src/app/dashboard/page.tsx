@@ -16,6 +16,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import Wrapper from '@/components/Wrapper';
+import { env } from '@/data/env/server';
 import { db } from '@/db/prisma';
 import { formatPrice } from '@/lib/utils';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
@@ -28,8 +29,7 @@ const MONTHLY_GOAL = 2000;
 async function DashboardPage() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-  if (!user || user.email !== ADMIN_EMAIL) return notFound();
+  if (!user || user.email !== env.ADMIN_EMAIL) return notFound();
 
   const orders = await db.order.findMany({
     where: {

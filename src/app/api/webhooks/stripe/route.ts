@@ -1,18 +1,19 @@
 import OrderReceivedEmail from '@/components/emails/OrderReceivedEmail';
+import { env } from '@/data/env/server';
 import { db } from '@/db/prisma';
 import { stripe } from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import Stripe from 'stripe';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
     const event = stripe.webhooks.constructEvent(
       await req.text(),
       req.headers.get('stripe-signature') as string,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      env.STRIPE_WEBHOOK_SECRET
     );
 
     if (event.type === 'checkout.session.completed') {

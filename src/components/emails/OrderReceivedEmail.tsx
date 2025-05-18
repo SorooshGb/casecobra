@@ -1,3 +1,4 @@
+import { env } from '@/data/env/client';
 import { ShippingAddress } from '@/db/generated/prisma';
 import {
   Body,
@@ -19,8 +20,6 @@ function OrderReceivedEmail({ shippingAddress, orderId, orderDate }: {
   orderId: string;
   orderDate: string;
 }) {
-  const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://';
-
   return (
     <Html>
       <Head />
@@ -29,7 +28,7 @@ function OrderReceivedEmail({ shippingAddress, orderId, orderDate }: {
         <Container style={container}>
           <Section style={message}>
             <Img
-              src={`${baseUrl}/snake-3.png`}
+              src={`${env.NEXT_PUBLIC_SERVER_URL}/snake-3.png`}
               width="65"
               height="73"
               alt="delivery snake"

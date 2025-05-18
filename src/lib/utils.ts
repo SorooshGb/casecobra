@@ -1,3 +1,4 @@
+import { env } from '@/data/env/client';
 import { type ClassValue, clsx } from 'clsx';
 import { Metadata } from 'next';
 import { twMerge } from 'tailwind-merge';
@@ -34,6 +35,6 @@ export function constructMetadata(
       images: [image],
     },
     icons,
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL!),
+    metadataBase: new URL(env.NEXT_PUBLIC_SERVER_URL),
   };
 }
