@@ -1,7 +1,7 @@
 import OrderReceivedEmail from '@/components/emails/OrderReceivedEmail';
 import { env } from '@/data/env/server';
 import { db } from '@/db/prisma';
-import { stripe } from '@/lib/stripe';
+import { stripe } from '@/services/stripe/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import Stripe from 'stripe';

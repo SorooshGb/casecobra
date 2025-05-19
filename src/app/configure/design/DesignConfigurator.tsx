@@ -16,8 +16,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BASE_PRICE } from '@/config/products';
-import { useUploadThing } from '@/lib/uploadthing';
 import { cn, formatPrice } from '@/lib/utils';
+import { useUploadThing } from '@/services/uploadthing/uploadthing';
 import { COLORS, FINISHES, MATERIALS, MODELS } from '@/validator/optionValidator';
 import { Description, Label as HeadlessLabel, Radio, RadioGroup } from '@headlessui/react';
 import { useMutation } from '@tanstack/react-query';

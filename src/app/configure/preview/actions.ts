@@ -4,7 +4,7 @@ import { BASE_PRICE, PRODUCT_PRICES } from '@/config/products';
 import { env } from '@/data/env/client';
 import { Order } from '@/db/generated/prisma';
 import { db } from '@/db/prisma';
-import { stripe } from '@/lib/stripe';
+import { stripe } from '@/services/stripe/stripe';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 
 export async function createCheckoutSession({ configId }: { configId: string }) {

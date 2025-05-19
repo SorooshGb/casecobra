@@ -1,8 +1,8 @@
 'use client';
 
 import { Progress } from '@/components/ui/progress';
-import { useUploadThing } from '@/lib/uploadthing';
 import { cn } from '@/lib/utils';
+import { useUploadThing } from '@/services/uploadthing/uploadthing';
 import { Image, Loader2, MousePointerSquareDashed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
