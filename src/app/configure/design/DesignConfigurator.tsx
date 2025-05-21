@@ -103,7 +103,8 @@ function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfi
       const actualY = renderedPosition.y - topOffset;
 
       const canvas = document.createElement('canvas');
-      canvas.width = width, canvas.height = height;
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext('2d');
 
       const userImage = new Image();
@@ -125,7 +126,7 @@ function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfi
       const file = new File([blob], 'filename.png', { type: 'image/png' });
 
       await startUpload([file], { configId });
-    } catch (error) {
+    } catch {
       toast.error('Something went wrong', {
         description: 'There was a problem saving your config, please try again.',
       });

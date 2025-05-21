@@ -20,7 +20,7 @@ function PhonePreview({ croppedImageUrl, color }: { croppedImageUrl: string; col
     window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
-  }, [ref.current]);
+  }, []);
 
   let caseBackgroundColor = 'bg-zinc-950';
   if (color === 'blue') caseBackgroundColor = 'bg-blue-950';
@@ -42,6 +42,7 @@ function PhonePreview({ croppedImageUrl, color }: { croppedImageUrl: string; col
             'phone-skew relative z-20 rounded-t-[15px] rounded-b-[10px] md:rounded-t-[30px] md:rounded-b-[20px]',
             caseBackgroundColor
           )}
+          alt="Your image on the phone case"
         />
       </div>
 

@@ -3,7 +3,7 @@
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useUploadThing } from '@/services/uploadthing/uploadthing';
-import { Image, Loader2, MousePointerSquareDashed } from 'lucide-react';
+import { ImageIcon, Loader2, MousePointerSquareDashed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import Dropzone, { FileRejection } from 'react-dropzone';
@@ -74,7 +74,7 @@ function UploadStepPage() {
                 ? <MousePointerSquareDashed className="size-6 text-zinc-500 mb-2" />
                 : isUploading || isPending
                 ? <Loader2 className="animate-spin size-6 text-zinc-500 mb-2" />
-                : <Image className="size-6 text-zinc-500 mb-2" />}
+                : <ImageIcon className="size-6 text-zinc-500 mb-2" />}
               <div className="flex flex-col justify-center mb-2 text-sm text-zinc-700">
                 {isUploading
                   ? (

@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { Icons } from '@/components/Icons';
-import LoginModal from '@/components/LoginModal';
 import Phone from '@/components/Phone';
 import Reviews from '@/components/Reviews';
 import { buttonVariants } from '@/components/ui/button';
@@ -94,10 +93,14 @@ export default function Home() {
               <img
                 src="/your-image.png"
                 className="absolute w-40 lg:w-52 left-56 -top-20 hidden sm:block lg:hidden xl:block"
+                aria-hidden="true"
+                alt=""
               />
               <img
                 src="/line.png"
                 className="absolute w-20 -left-6 -bottom-6"
+                aria-hidden="true"
+                alt=""
               />
               <Phone imgSrc="/testimonials/1.jpg" />
             </div>
@@ -117,7 +120,7 @@ export default function Home() {
               </span>{' '}
               say
             </h2>
-            <img src="/snake-2.png" className="w-24 order-0 lg:order-2" />
+            <img src="/snake-2.png" className="w-24 order-0 lg:order-2" aria-hidden="true" alt="" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-16 max-w-2xl lg:max-w-none px-4 ">
@@ -160,11 +163,13 @@ export default function Home() {
                 <img
                   src="/horse.jpg"
                   className="rounded-md object-contain shadow-2xl ring-1 ring-gray-900/10 w-full"
+                  alt="Example image to be used on a phone case"
                 />
               </div>
               <img
                 src="/arrow.png"
                 className="rotate-90 lg:rotate-0"
+                alt="Arrow connecting the example image to the phone case using it"
               />
               <Phone className="w-60 shrink-0" imgSrc="/horse_phone.jpg" />
             </div>

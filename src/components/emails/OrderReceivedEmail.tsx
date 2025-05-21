@@ -1,5 +1,4 @@
 import { env } from '@/data/env/client';
-import { ShippingAddress } from '@/db/generated/prisma';
 import {
   Body,
   Column,
@@ -16,7 +15,14 @@ import {
 } from '@react-email/components';
 
 function OrderReceivedEmail({ shippingAddress, orderId, orderDate }: {
-  shippingAddress: ShippingAddress;
+  shippingAddress: {
+    name: string;
+    city: string;
+    country: string;
+    postalCode: string;
+    street: string;
+    state: string;
+  };
   orderId: string;
   orderDate: string;
 }) {

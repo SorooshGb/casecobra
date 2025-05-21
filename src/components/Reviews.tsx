@@ -31,9 +31,10 @@ function Reviews() {
   return (
     <div className="relative max-w-5xl mx-auto px-2.5 md:px-20">
       <img
-        aria-hidden="true"
         src="/what-people-are-buying.png"
         className="absolute -left-32 top-1/3 hidden xl:block select-none"
+        aria-hidden="true"
+        alt=""
       />
       <ReviewGrid />
     </div>

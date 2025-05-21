@@ -4,13 +4,12 @@ import PhonePreview from '@/components/PhonePreview';
 import { formatPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { notFound, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { getPaymentStatus } from './actions';
 
 function ThankYou() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId');
-  if (!orderId) return notFound();
+  const orderId = searchParams.get('orderId') || '';
 
   const { data } = useQuery({
     queryKey: ['get-payment-status'],

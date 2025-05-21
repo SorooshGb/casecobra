@@ -57,6 +57,8 @@ function Steps() {
                       'border-none': isCompleted,
                       'border-zinc-700': isCurrent,
                     })}
+                    aria-hidden="true"
+                    alt=""
                   />
                 </span>
 
