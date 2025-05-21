@@ -4,7 +4,7 @@ import LoginModal from '@/components/LoginModal';
 import Phone from '@/components/Phone';
 import { Button } from '@/components/ui/button';
 import { BASE_PRICE, PRODUCT_PRICES } from '@/config/products';
-import { Configuration } from '@/db/generated/prisma';
+import { Configuration } from 'generated/prisma';
 import { cn, formatPrice } from '@/lib/utils';
 import { COLORS, MODELS } from '@/validator/optionValidator';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
