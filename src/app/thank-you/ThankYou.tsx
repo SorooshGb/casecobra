@@ -20,7 +20,7 @@ function ThankYou() {
 
   if (data === undefined) {
     return (
-      <div className="mt-24 flex justify-center">
+      <div className="flex-1 flex justify-center mt-24">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="size-8 animate-spin text-zinc-500" />
           <h3 className="font-semibold text-xl">Loading your order...</h3>
@@ -32,7 +32,7 @@ function ThankYou() {
 
   if (data === false) {
     return (
-      <div className="mt-24 flex justify-center">
+      <div className="flex-1 flex justify-center mt-24 ">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="size-8 animate-spin text-zinc-500" />
           <h3 className="font-semibold text-xl">Verifying your payment...</h3>
