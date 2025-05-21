@@ -32,7 +32,7 @@ function AuthCallbackPage() {
   }
 
   return (
-    <div className="mt-24 flex justify-center">
+    <div className="flex justify-center items-center flex-1">
       <div className="flex flex-col items-center gap-2">
         <Loader2 className="size-8 animate-spin text-zinc-500" />
         <h3 className="font-semibold text-xl">Logging you in...</h3>

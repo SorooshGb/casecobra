@@ -8,9 +8,11 @@ type PhoneProps = HTMLAttributes<HTMLDivElement> & {
 
 function Phone({ imgSrc, className, dark = false, ...props }: PhoneProps) {
   return (
-    <div className={cn('relative pointer-events-none z-50 overflow-hidden', className)} {...props}>
+    <div
+      className={cn('relative pointer-events-none select-none z-50 overflow-hidden', className)}
+      {...props}
+    >
       <img
-        className="pointer-events-none z-50 select-none"
         src={dark ? '/phone-template-dark-edges.png' : '/phone-template-white-edges.png'}
         alt="phone image"
       />

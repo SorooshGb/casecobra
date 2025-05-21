@@ -1,9 +1,9 @@
 'use client';
+
 import { cn } from '@/lib/utils';
 import { useInView } from 'framer-motion';
 import { HTMLAttributes, useEffect, useRef, useState } from 'react';
 import Phone from './Phone';
-import Wrapper from './Wrapper';
 
 const PHONES = [
   '/testimonials/1.jpg',
@@ -29,14 +29,14 @@ function splitArray<T>(array: Array<T>, numParts: number) {
 
 function Reviews() {
   return (
-    <Wrapper className="relative max-w-5xl">
+    <div className="relative max-w-5xl mx-auto px-2.5 md:px-20">
       <img
         aria-hidden="true"
         src="/what-people-are-buying.png"
-        className="absolute select-none hidden xl:block -left-32 top-1/3"
+        className="absolute -left-32 top-1/3 hidden xl:block select-none"
       />
       <ReviewGrid />
-    </Wrapper>
+    </div>
   );
 }
 export default Reviews;
@@ -52,36 +52,34 @@ function ReviewGrid() {
   return (
     <div
       ref={containerRef}
-      className="relative -mx-4 mt-16 grid h-[49rem] max-h-[150vh] grid-cols-1 items-start gap-8 overflow-hidden px-4 sm:mt-20 md:grid-cols-2 lg:grid-cols-3"
+      className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start gap-8 h-[49rem] overflow-hidden px-4 mt-16 sm:mt-20 select-none"
     >
-      {isInView
-        ? (
-          <>
-            <ReviewColumn
-              reviews={[...column1, ...column3.flat(), ...column2]}
-              reviewClassName={(reviewIndex) =>
-                cn({
-                  'md:hidden': reviewIndex >= column1.length + column3[0].length,
-                  'lg:hidden': reviewIndex >= column1.length,
-                })}
-              msPerPixel={10}
-            />
-            <ReviewColumn
-              reviews={[...column2, ...column3[1]]}
-              className="hidden md:block"
-              reviewClassName={(reviewIndex) => reviewIndex >= column2.length ? 'lg:hidden' : ''}
-              msPerPixel={15}
-            />
-            <ReviewColumn
-              reviews={column3.flat()}
-              className="hidden md:block"
-              msPerPixel={10}
-            />
-          </>
-        )
-        : null}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-100" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-100" />
+      {isInView && (
+        <>
+          <ReviewColumn
+            reviews={[...column1, ...column3.flat(), ...column2]}
+            reviewClassName={(reviewIndex) =>
+              cn({
+                'md:hidden': reviewIndex >= column1.length + column3[0].length,
+                'lg:hidden': reviewIndex >= column1.length,
+              })}
+            msPerPixel={10}
+          />
+          <ReviewColumn
+            reviews={[...column2, ...column3[1]]}
+            className="hidden md:block"
+            reviewClassName={(reviewIndex) => reviewIndex >= column2.length ? 'lg:hidden' : ''}
+            msPerPixel={15}
+          />
+          <ReviewColumn
+            reviews={column3.flat()}
+            className="hidden md:block"
+            msPerPixel={10}
+          />
+        </>
+      )}
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-100 pointer-events-none " />
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-100 pointer-events-none" />
     </div>
   );
 }

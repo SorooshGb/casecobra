@@ -1,3 +1,5 @@
+'use client';
+
 import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
@@ -11,7 +13,7 @@ function LoginModal(
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
-          <div className="relative mx-auto size-24 mb-2">
+          <div className="relative size-24 mx-auto mb-2">
             <Image
               src="/snake-1.png"
               alt="snake image"
@@ -28,7 +30,7 @@ function LoginModal(
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-6 divide-x divide-gray-200">
+        <div className="grid grid-cols-2 gap-6">
           <LoginLink className={buttonVariants({ variant: 'outline' })}>Login</LoginLink>
           <RegisterLink className={buttonVariants({ variant: 'default' })}>Sign up</RegisterLink>
         </div>

@@ -11,10 +11,10 @@ async function Navbar() {
   const isAdmin = user?.email === env.ADMIN_EMAIL;
 
   return (
-    <nav className="sticky z-[100] h-14 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
+    <nav className="sticky inset-x-0 top-0 z-[100] bg-white/75 backdrop-blur-lg border-b border-gray-200 transition-all">
       <Wrapper>
         <div className="flex h-14 items-center justify-between border-b border-zin-200">
-          <Link href="/" className="flex z-40 font-semibold">
+          <Link href="/" className="flex text-lg z-40 font-semibold">
             case<span className="text-green-600">cobra</span>
           </Link>
 
