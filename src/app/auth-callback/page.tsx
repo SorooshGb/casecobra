@@ -1,41 +1,46 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import useServerAction from '@/hooks/useServerAction';
 import { Loader2 } from 'lucide-react';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { getAuthStatus } from './actions';
 
+function redirectAfterAuth(success: boolean, router: AppRouterInstance) {
+  const configId = localStorage.getItem('configurationId');
+  const target = configId ? `/configure/preview?id=${configId}` : '/';
+  localStorage.removeItem('configurationId');
+
+  if (success) {
+    router.push(target);
+    return null;
+  }
+
+  return setTimeout(() => router.push(target), 2000);
+}
+
 function AuthCallbackPage() {
-  const [configId, setConfigId] = useState<string | null>(null);
+  const [data] = useServerAction(getAuthStatus);
   const router = useRouter();
 
   useEffect(() => {
-    const configurationId = localStorage.getItem('configurationId');
-    if (configurationId) setConfigId(configurationId);
-  }, []);
+    if (!data) return;
 
-  const { data } = useQuery({
-    queryKey: ['auth-callback'],
-    queryFn: async () => await getAuthStatus(),
-    retry: true,
-    retryDelay: 500,
-  });
+    const timeout = redirectAfterAuth(data.success, router);
 
-  if (data?.success) {
-    if (configId) {
-      localStorage.removeItem('configurationId');
-      router.push(`/configure/preview?id=${configId}`);
-    } else {
-      router.push('/');
-    }
-  }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [router, data]);
 
   return (
     <div className="flex justify-center items-center flex-1">
       <div className="flex flex-col items-center gap-2">
         <Loader2 className="size-8 animate-spin text-zinc-500" />
-        <h3 className="font-semibold text-xl">Logging you in...</h3>
+        {(data && !data.success)
+          ? <h3 className="font-semibold text-xl text-red-500">{data?.message}</h3>
+          : <h3 className="font-semibold text-xl">Logging you in...</h3>}
         <p>You will be redirected automatically</p>
       </div>
     </div>

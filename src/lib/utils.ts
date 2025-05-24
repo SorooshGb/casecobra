@@ -13,6 +13,24 @@ export function formatPrice(price: number) {
   return formatter.format(price);
 }
 
+export async function retry<T>(fn: () => Promise<T>, options: {
+  retries?: number;
+  delay?: number;
+} = {}): Promise<T> {
+  const { retries = 3, delay = 500 } = options;
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === retries - 1) throw error;
+      await new Promise(res => setTimeout(res, delay));
+    }
+  }
+
+  throw new Error('Unreachable');
+}
+
 export function constructMetadata(
   {
     title = 'CaseCobra - custom high-quality phone cases',
