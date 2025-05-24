@@ -20,32 +20,20 @@ import { cn, formatPrice } from '@/lib/utils';
 import { useUploadThing } from '@/services/uploadthing/uploadthing';
 import { COLORS, FINISHES, MATERIALS, MODELS } from '@/validator/optionValidator';
 import { Description, Label as HeadlessLabel, Radio, RadioGroup } from '@headlessui/react';
-import { useMutation } from '@tanstack/react-query';
 import { ArrowRight, Check, ChevronsUpDown } from 'lucide-react';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { Rnd } from 'react-rnd';
 import { toast } from 'sonner';
-import { saveConfig as _saveConfig, SaveConfigArgs } from './actions';
+import { saveConfig } from './actions';
+import { getCroppedImage } from './utils';
 
 type DesignConfiguratorProps = {
   configId: string;
   imageUrl: string;
   imageDimensions: { width: number; height: number };
 };
-
-function base64ToBlob(base64: string, mimeType: string) {
-  const byteCharacters = atob(base64);
-  const byteNumbers = new Array(byteCharacters.length);
-
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-
-  const byteArray = new Uint8Array(byteNumbers);
-  return new Blob([byteArray], { type: mimeType });
-}
 
 function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfiguratorProps) {
   const [options, setOptions] = useState<
@@ -62,75 +50,47 @@ function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfi
     finish: FINISHES.options[0],
   });
 
-  const [renderedDimension, setRenderedDimension] = useState({
+  const [renderedBounds, setRenderedBounds] = useState({
     width: imageDimensions.width / 4,
     height: imageDimensions.height / 4,
+    x: 150,
+    y: 205,
   });
-  const [renderedPosition, setRenderedPosition] = useState({ x: 150, y: 205 });
+
+  const { startUpload } = useUploadThing('imageUploader');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const phoneCaseRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { startUpload } = useUploadThing('imageUploader');
-  const router = useRouter();
-
-  const { mutate: saveConfig, isPending } = useMutation({
-    mutationKey: ['save-config'],
-    mutationFn: async (args: SaveConfigArgs) => {
-      await Promise.all([saveConfiguration(), _saveConfig(args)]);
-    },
-    onError: () => {
-      toast.error('Something went wrong', {
-        description: 'There was an error on our end. Please try again.',
-      });
-    },
-    onSuccess: () => {
-      router.push(`/configure/preview/?id=${configId}`);
-    },
-  });
-
   async function saveConfiguration() {
+    if (!containerRef.current || !phoneCaseRef.current) return;
+    setLoading(true);
+
     try {
-      const { left: caseLeft, top: caseTop, width, height } = phoneCaseRef.current!
-        .getBoundingClientRect();
-      const { left: containerLeft, top: containerTop } = containerRef.current!
-        .getBoundingClientRect();
-
-      const leftOffset = caseLeft - containerLeft;
-      const topOffset = caseTop - containerTop;
-
-      const actualX = renderedPosition.x - leftOffset;
-      const actualY = renderedPosition.y - topOffset;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-
-      const userImage = new Image();
-      userImage.crossOrigin = 'anonymous';
-      userImage.src = imageUrl;
-      await new Promise(resolve => userImage.onload = resolve);
-      ctx?.drawImage(
-        userImage,
-        actualX,
-        actualY,
-        renderedDimension.width,
-        renderedDimension.height
-      );
-
-      const base64 = canvas.toDataURL();
-      const base64Data = base64.split(',')[1];
-
-      const blob = base64ToBlob(base64Data, 'image/png');
-      const file = new File([blob], 'filename.png', { type: 'image/png' });
-
+      const file = await getCroppedImage({
+        container: containerRef.current,
+        phoneCase: phoneCaseRef.current,
+        renderedBounds,
+        imageUrl,
+      });
       await startUpload([file], { configId });
+      await saveConfig({
+        configId,
+        color: options.color.value,
+        finish: options.finish.value,
+        material: options.material.value,
+        model: options.model.value,
+      });
+      router.push(`/configure/preview/?id=${configId}`);
     } catch {
       toast.error('Something went wrong', {
         description: 'There was a problem saving your config, please try again.',
       });
     }
+
+    setLoading(false);
   }
 
   return (
@@ -177,13 +137,9 @@ function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfi
           }}
           className="absolute z-20 border-[3px] border-primary"
           onResizeStop={(_, __, ref, ___, { x, y }) => {
-            setRenderedPosition({ x, y });
-            setRenderedDimension({
-              height: ref.offsetHeight,
-              width: ref.offsetWidth,
-            });
+            setRenderedBounds({ x, y, height: ref.offsetHeight, width: ref.offsetWidth });
           }}
-          onDragStop={(_, data) => setRenderedPosition({ x: data.x, y: data.y })}
+          onDragStop={(_, data) => setRenderedBounds({ ...renderedBounds, x: data.x, y: data.y })}
         >
           <div className="relative h-full bg-black">
             <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none" />
@@ -326,19 +282,12 @@ function DesignConfigurator({ configId, imageUrl, imageDimensions }: DesignConfi
               {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
             </p>
             <Button
-              isLoading={isPending}
-              disabled={isPending}
+              isLoading={loading}
+              disabled={loading}
               loadingText="Saving"
               size="sm"
               className="w-full max-w-72"
-              onClick={() =>
-                saveConfig({
-                  configId,
-                  color: options.color.value,
-                  finish: options.finish.value,
-                  material: options.material.value,
-                  model: options.model.value,
-                })}
+              onClick={() => saveConfiguration()}
             >
               Continue
               <ArrowRight className="size-4 ml-1.5" />
