@@ -4,17 +4,17 @@ import LoginModal from '@/components/LoginModal';
 import Phone from '@/components/Phone';
 import { Button } from '@/components/ui/button';
 import { BASE_PRICE, PRODUCT_PRICES } from '@/config/products';
-import { Configuration } from 'generated/prisma';
 import { cn, formatPrice } from '@/lib/utils';
 import { COLORS, MODELS } from '@/validator/optionValidator';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import { useMutation } from '@tanstack/react-query';
+import { Configuration } from 'generated/prisma';
 import { ArrowRight, Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-dom-confetti';
 import { toast } from 'sonner';
 import { createCheckoutSession } from './actions';
+import { getTotalCasePrice } from './utils';
 
 function DesignPreview({ configuration }: { configuration: Configuration }) {
   const router = useRouter();
@@ -28,31 +28,18 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
 
   const { label: modelLabel } = MODELS.options.find(({ value }) => value === model)!;
 
-  let totalPrice = BASE_PRICE;
-  if (material === 'polycarbonate') totalPrice += PRODUCT_PRICES.material.polycarbonate;
-  if (finish === 'textured') totalPrice += PRODUCT_PRICES.finish.textured;
+  const totalPrice = getTotalCasePrice(finish, material);
 
-  const { mutate: createPaymentSession } = useMutation({
-    mutationKey: ['get-checkout-session'],
-    mutationFn: createCheckoutSession,
-    onSuccess: ({ url }) => {
-      if (url) router.push(url);
-      else throw new Error('Unable to retrieve payment URL');
-    },
-    onError: () => {
-      toast.error('Something went wrong', {
-        description: ' There was an error on our end. Please try again.',
-      });
-    },
-  });
-
-  function handleCheckout() {
-    if (user) {
-      createPaymentSession({ configId: configuration.id });
-    } else {
+  async function handleCheckout() {
+    if (!user) {
       localStorage.setItem('configurationId', configuration.id);
       setIsLoginModalOpen(true);
+      return;
     }
+
+    const result = await createCheckoutSession({ configId: configuration.id });
+    if (result.success) router.push(result.url);
+    else toast.error(result.message);
   }
 
   return (
