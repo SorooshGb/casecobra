@@ -7,12 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { OrderStatus } from 'generated/prisma';
 import { cn } from '@/lib/utils';
-import { useMutation } from '@tanstack/react-query';
+import { OrderStatus } from 'generated/prisma';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { changeOrderStatus } from './actions';
+import { toast } from 'sonner';
+import { updateOrderStatus } from './actions';
 
 const LABEL_MAP: Record<keyof typeof OrderStatus, string> = {
   awaiting_shipment: 'Awaiting Shipment',
@@ -23,11 +23,12 @@ const LABEL_MAP: Record<keyof typeof OrderStatus, string> = {
 function StatusDropdown({ id, orderStatus }: { id: string; orderStatus: OrderStatus }) {
   const router = useRouter();
 
-  const { mutate } = useMutation({
-    mutationKey: ['change-order-status'],
-    mutationFn: changeOrderStatus,
-    onSuccess: () => router.refresh(),
-  });
+  async function onClickStatus(status: OrderStatus) {
+    const result = await updateOrderStatus({ id, newStatus: status });
+
+    if (result.success) router.refresh();
+    else toast.error('There was an error updating status');
+  }
 
   return (
     <DropdownMenu>
@@ -38,14 +39,14 @@ function StatusDropdown({ id, orderStatus }: { id: string; orderStatus: OrderSta
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        {Object.keys(OrderStatus).map(status => (
+        {Object.keys(OrderStatus).map((status) => (
           <DropdownMenuItem
             className={cn(
               'flex text-sm gap-1 items-center p-2.5 cursor-default hover:bg-zinc-100',
               { 'bg-zinc-100': orderStatus === status }
             )}
             key={status}
-            onClick={() => mutate({ id, newStatus: status as OrderStatus })}
+            onClick={() => onClickStatus(status as OrderStatus)}
           >
             <Check
               className={cn(
