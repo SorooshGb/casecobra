@@ -1,48 +1,25 @@
-'use client';
-
 import PhonePreview from '@/components/PhonePreview';
-import { formatPrice } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { getPaymentStatus } from './actions';
+import { buttonVariants } from '@/components/ui/button';
+import { db } from '@/db/prisma';
+import { formatPrice, retry } from '@/lib/utils';
+import { Prisma } from 'generated/prisma/client';
+import Link from 'next/link';
 
-function ThankYou() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId') || '';
+async function ThankYou({ orderId, userId }: { orderId: string; userId: string }) {
+  const data = await getOrderRetry({ id: orderId, userId });
 
-  const { data } = useQuery({
-    queryKey: ['get-payment-status'],
-    queryFn: async () => await getPaymentStatus({ orderId }),
-    retry: true,
-    retryDelay: 500,
-  });
-
-  if (data === undefined) {
+  if (!data.success) {
     return (
-      <div className="flex-1 flex justify-center mt-24">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="size-8 animate-spin text-zinc-500" />
-          <h3 className="font-semibold text-xl">Loading your order...</h3>
-          <p>This won't take long.</p>
+      <div className="flex-1 flex items-center justify-center py-6 text-center">
+        <div>
+          <h3 className="font-semibold text-xl text-red-400 mb-2">{data.message}</h3>
+          <Link href="/" className={buttonVariants({ variant: 'outline' })}>Home Page</Link>
         </div>
       </div>
     );
   }
 
-  if (data === false) {
-    return (
-      <div className="flex-1 flex justify-center mt-24 ">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="size-8 animate-spin text-zinc-500" />
-          <h3 className="font-semibold text-xl">Verifying your payment...</h3>
-          <p>This might take a moment.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { configuration, billingAddress, shippingAddress, amount } = data;
+  const { configuration, billingAddress, shippingAddress, amount } = data.data;
   const { color } = configuration;
 
   return (
@@ -134,3 +111,50 @@ function ThankYou() {
   );
 }
 export default ThankYou;
+
+type GetOrderRetry = { success: true; data: OrderWithRelations } | {
+  success: false;
+  message: string;
+};
+
+type OrderWithRelations = Prisma.OrderGetPayload<{
+  include: {
+    configuration: true;
+    billingAddress: true;
+    shippingAddress: true;
+    user: true;
+  };
+}>;
+
+async function getOrderRetry(
+  { id, userId }: { id: string; userId: string }
+): Promise<GetOrderRetry> {
+  try {
+    return retry(async () => {
+      const order = await getOrder({ userId, id });
+      if (order == null) {
+        return { success: false, message: 'This order does not exist' };
+      }
+
+      if (!order.isPaid) throw new Error();
+
+      return { success: true, data: order };
+    }, { retries: 10, delay: 500 });
+  } catch {
+    return { success: false, message: 'Unable to verify your payment' };
+  }
+}
+
+async function getOrder({ id, userId }: { id: string; userId: string }) {
+  const order = await db.order.findFirst({
+    where: { id, userId },
+    include: {
+      configuration: true,
+      billingAddress: true,
+      shippingAddress: true,
+      user: true,
+    },
+  });
+
+  return order;
+}
