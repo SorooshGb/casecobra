@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { CaseColor } from 'generated/prisma';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { AspectRatio } from './ui/aspect-ratio';
 
 function PhonePreview({ croppedImageUrl, color }: { croppedImageUrl: string; color: CaseColor }) {
@@ -14,7 +14,8 @@ function PhonePreview({ croppedImageUrl, color }: { croppedImageUrl: string; col
     const { width, height } = ref.current.getBoundingClientRect();
     setRenderedDimensions({ width, height });
   }
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     handleResize();
 
     window.addEventListener('resize', handleResize);
