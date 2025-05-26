@@ -21,6 +21,8 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
   const { user } = useKindeBrowserClient();
   const [showConfetti, setShowConfetti] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
   useEffect(() => setShowConfetti(true), []);
 
   const { color, model, finish, material } = configuration;
@@ -37,9 +39,13 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
       return;
     }
 
+    setIsCheckingOut(true);
+
     const result = await createCheckoutSession({ configId: configuration.id });
     if (result.success) router.push(result.url);
     else toast.error(result.message);
+
+    setIsCheckingOut(false);
   }
 
   return (
@@ -127,8 +133,13 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
               <Button
                 onClick={() => handleCheckout()}
                 className="px-4 sm:px-6 lg:px-8"
+                disabled={isCheckingOut}
               >
-                Check out <ArrowRight className="size-4 ml-1.5 inline" />
+                {isCheckingOut ? 'Checking out...' : (
+                  <>
+                    Check out <ArrowRight className="size-4 ml-1.5 inline" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
