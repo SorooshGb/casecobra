@@ -1,5 +1,10 @@
 import { env } from '@/data/env/server';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import {
+  getKindeServerSession,
+  LoginLink,
+  LogoutLink,
+  RegisterLink
+} from '@kinde-oss/kinde-auth-nextjs/server';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { buttonVariants } from './ui/button';
@@ -22,12 +27,12 @@ async function Navbar() {
             {user
               ? (
                 <>
-                  <Link
+                  <LogoutLink
                     href="/api/auth/logout"
                     className={buttonVariants({ size: 'sm', variant: 'ghost' })}
                   >
                     Sign out
-                  </Link>
+                  </LogoutLink>
                   {isAdmin
                     ? (
                       <Link
@@ -52,13 +57,13 @@ async function Navbar() {
               )
               : (
                 <>
-                  <Link
+                  <RegisterLink
                     href="api/auth/register"
                     className={buttonVariants({ size: 'sm', variant: 'ghost' })}
                   >
                     Sign up
-                  </Link>
-                  <Link
+                  </RegisterLink>
+                  <LoginLink
                     href="/api/auth/login"
                     className={buttonVariants({
                       size: 'sm',
@@ -66,7 +71,7 @@ async function Navbar() {
                     })}
                   >
                     Login
-                  </Link>
+                  </LoginLink>
 
                   <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
 
