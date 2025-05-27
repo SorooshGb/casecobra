@@ -31,51 +31,19 @@ async function DashboardPage() {
   const user = await getUser();
   if (!user || user.email !== env.ADMIN_EMAIL) return notFound();
 
-  const orders = await db.order.findMany({
-    where: {
-      isPaid: true,
-      createdAt: {
-        gte: new Date(new Date().setDate(new Date().getDate() - 7)),
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      user: true,
-      shippingAddress: true,
-    },
-  });
+  const [orders, lastWeekSum, lastMonthSum] = await Promise.all([
+    getOrders(),
+    getTotalPaidAmountSince(7),
+    getTotalPaidAmountSince(30)
+  ]);
 
-  if (orders[0] == null) {
+  if (!orders.length) {
     return (
       <Wrapper className="flex justify-center items-center py-4 flex-1">
         <h1 className="text-3xl">No orders yet</h1>
       </Wrapper>
     );
   }
-
-  const lastWeekSum = await db.order.aggregate({
-    where: {
-      isPaid: true,
-      createdAt: {
-        gte: new Date(new Date().setDate(new Date().getDate() - 7)),
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-
-  const lastMonthSum = await db.order.aggregate({
-    where: {
-      isPaid: true,
-      createdAt: {
-        gte: new Date(new Date().setDate(new Date().getDate() - 30)),
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
 
   return (
     <Wrapper className="flex-1 flex flex-col gap-16 py-4 ">
@@ -141,3 +109,33 @@ async function DashboardPage() {
   );
 }
 export default DashboardPage;
+
+async function getOrders() {
+  return db.order.findMany({
+    where: {
+      isPaid: true,
+      createdAt: {
+        gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      user: true,
+      shippingAddress: true,
+    },
+  });
+}
+
+async function getTotalPaidAmountSince(daysAgo: number) {
+  return db.order.aggregate({
+    where: {
+      isPaid: true,
+      createdAt: {
+        gte: new Date(new Date().setDate(new Date().getDate() - daysAgo)),
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+}
