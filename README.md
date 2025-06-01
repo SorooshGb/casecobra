@@ -46,6 +46,9 @@ Create a `.env` file in the root of the project and copy the contents of `.env.e
 
 > ❗️You **must** fill out **all** values in `.env` before running the project — otherwise, the app will throw an error on startup.
 
+> You must also add http://localhost:3000/api/auth/kinde_callback to your Kinde application's Allowed callback URLs field.
+Likewise, set the Allowed logout URLs field to: http://localhost:3000
+
 ---
 
 ### 4. Start PostgreSQL via Docker
